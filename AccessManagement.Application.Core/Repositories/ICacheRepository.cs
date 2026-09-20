@@ -25,4 +25,8 @@ public interface ICacheRepository
     int? ttlMinutes = null,
     CancellationToken cancellationToken = default)
     where T : class;
+
+  Task RemoveAsync(
+    string key,
+    CancellationToken cancellationToken = default);
 }

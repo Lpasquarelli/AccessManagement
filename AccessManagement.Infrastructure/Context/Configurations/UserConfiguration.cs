@@ -66,6 +66,7 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
       .HasMaxLength(150);
 
     builder.Property(user => user.UpdatedBy)
-      .HasColumnName("UpdatedBy");
+      .HasColumnName("UpdatedBy")
+      .HasMaxLength(150);
   }
 }

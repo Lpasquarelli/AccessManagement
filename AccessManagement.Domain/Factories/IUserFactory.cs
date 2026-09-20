@@ -12,4 +12,16 @@ public interface IUserFactory
     string authenticationId,
     bool isBrazilResident,
     string? createdBy);
+
+  User Update(
+    User user,
+    string name,
+    string? email,
+    string? phone,
+    string taxId,
+    string authenticationId,
+    bool isBrazilResident,
+    string? updatedBy);
+
+  User Deactivate(User user, string? updatedBy);
 }

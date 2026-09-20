@@ -1,6 +1,6 @@
-namespace AccessManagement.Application.UseCases.Users.GetUserById;
+namespace AccessManagement.Application.UseCases.Users.UpdateUser;
 
-public sealed record GetUserByIdUseCaseOutput(
+public sealed record UpdateUserUseCaseOutput(
   Guid Id,
   string Name,
   string? Email,

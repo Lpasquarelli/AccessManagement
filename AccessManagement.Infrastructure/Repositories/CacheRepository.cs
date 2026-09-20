@@ -51,6 +51,27 @@ public sealed class CacheRepository(
       GetExpiration(ttlMinutes, _options.FallbackTtlMinutes),
       cancellationToken);
 
+  public async Task RemoveAsync(
+    string key,
+    CancellationToken cancellationToken = default)
+  {
+    cancellationToken.ThrowIfCancellationRequested();
+
+    try
+    {
+      await connectionMultiplexer.GetDatabase().KeyDeleteAsync([
+        BuildKey(key, "fresh"),
+        BuildKey(key, "fallback")
+      ]);
+    }
+    catch (RedisException exception)
+    {
+      logger.LogWarning(
+        exception,
+        "[CacheRepository][RemoveAsync] Redis values could not be removed.");
+    }
+  }
+
   private async Task<T?> GetValueAsync<T>(
     RedisKey key,
     CancellationToken cancellationToken)

@@ -12,4 +12,4 @@ public sealed record InsertUserUseCaseOutput(
   DateTime CreatedAt,
   DateTime? UpdatedAt,
   string? CreatedBy,
-  Guid? UpdatedBy);
+  string? UpdatedBy);

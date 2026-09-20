@@ -1,5 +1,7 @@
 using AccessManagement.Application.UseCases.Users.GetUserById;
 using AccessManagement.Application.UseCases.Users.InsertUser;
+using AccessManagement.Application.UseCases.Users.UpdateUser;
+using AccessManagement.Application.UseCases.Users.DeleteUser;
 using AccessManagement.Domain.Factories;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +14,8 @@ public static class ServiceCollectionExtensions
     services.AddTransient<IUserFactory, UserFactory>();
     services.AddScoped<IInsertUserUseCase, InsertUserUseCase>();
     services.AddScoped<IGetUserByIdUseCase, GetUserByIdUseCase>();
+    services.AddScoped<IUpdateUserUseCase, UpdateUserUseCase>();
+    services.AddScoped<IDeleteUserUseCase, DeleteUserUseCase>();
 
     return services;
   }

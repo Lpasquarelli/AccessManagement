@@ -2,6 +2,8 @@ using AccessManagement.API.Contracts;
 using AccessManagement.API.Extensions;
 using AccessManagement.Application.UseCases.Users.GetUserById;
 using AccessManagement.Application.UseCases.Users.InsertUser;
+using AccessManagement.Application.UseCases.Users.UpdateUser;
+using AccessManagement.Application.UseCases.Users.DeleteUser;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +15,8 @@ namespace AccessManagement.API.Controllers.V1;
 public sealed class UserController(
   IInsertUserUseCase insertUserUseCase,
   IGetUserByIdUseCase getUserByIdUseCase,
+  IUpdateUserUseCase updateUserUseCase,
+  IDeleteUserUseCase deleteUserUseCase,
   ILogger<UserController> logger) : ControllerBase
 {
   [HttpPost]
@@ -46,6 +50,47 @@ public sealed class UserController(
 
     var result = await getUserByIdUseCase.HandleAsync(
       new GetUserByIdUseCaseInput(id),
+      cancellationToken);
+
+    return result.ToActionResult();
+  }
+
+  [HttpPut]
+  [ProducesResponseType(typeof(UpdateUserUseCaseOutput), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+  [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+  [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status503ServiceUnavailable)]
+  [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
+  public async Task<IActionResult> UpdateAsync(
+    [FromBody] UpdateUserUseCaseInput input,
+    CancellationToken cancellationToken)
+  {
+    logger.LogInformation(
+      "[UserController][UpdateAsync] Received a request to update a user.");
+
+    var result = await updateUserUseCase.HandleAsync(
+      input,
+      cancellationToken);
+
+    return result.ToActionResult();
+  }
+
+  [HttpDelete("{id:guid}")]
+  [ProducesResponseType(typeof(DeleteUserUseCaseOutput), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+  [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+  [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status503ServiceUnavailable)]
+  [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
+  public async Task<IActionResult> DeleteAsync(
+    Guid id,
+    [FromQuery] string? updatedBy,
+    CancellationToken cancellationToken)
+  {
+    logger.LogInformation(
+      "[UserController][DeleteAsync] Received a request to logically delete a user.");
+
+    var result = await deleteUserUseCase.HandleAsync(
+      new DeleteUserUseCaseInput(id, updatedBy),
       cancellationToken);
 
     return result.ToActionResult();

@@ -21,7 +21,7 @@ public sealed class UserRepository(
     {
       return await dbContext.Users
         .AsNoTracking()
-        .SingleOrDefaultAsync(user => user.Id == id, cancellationToken);
+        .SingleOrDefaultAsync(user => user.Id == id && user.Active, cancellationToken);
     }
     catch (SqlException exception)
     {
@@ -57,6 +57,35 @@ public sealed class UserRepository(
       logger.LogError(
         exception,
         "[UserRepository][InsertAsync] SQL Server communication failed while inserting a user.");
+
+      throw new DataStoreUnavailableException("SQL Server is unavailable.", exception);
+    }
+  }
+
+  public async Task<User> UpdateAsync(User user, CancellationToken cancellationToken = default)
+  {
+    logger.LogDebug(
+      "[UserRepository][UpdateAsync] Updating user in SQL Server.");
+
+    try
+    {
+      dbContext.Users.Update(user);
+      await dbContext.SaveChangesAsync(cancellationToken);
+      return user;
+    }
+    catch (DbUpdateException exception) when (exception.InnerException is SqlException)
+    {
+      logger.LogError(
+        exception,
+        "[UserRepository][UpdateAsync] SQL Server communication failed while updating a user.");
+
+      throw new DataStoreUnavailableException("SQL Server is unavailable.", exception);
+    }
+    catch (SqlException exception)
+    {
+      logger.LogError(
+        exception,
+        "[UserRepository][UpdateAsync] SQL Server communication failed while updating a user.");
 
       throw new DataStoreUnavailableException("SQL Server is unavailable.", exception);
     }
