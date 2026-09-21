@@ -33,35 +33,6 @@ public sealed class UserRepository(
     }
   }
 
-  public async Task<User> InsertAsync(User user, CancellationToken cancellationToken = default)
-  {
-    logger.LogDebug(
-      "[UserRepository][InsertAsync] Inserting user in SQL Server.");
-
-    try
-    {
-      await dbContext.Users.AddAsync(user, cancellationToken);
-      await dbContext.SaveChangesAsync(cancellationToken);
-      return user;
-    }
-    catch (DbUpdateException exception) when (exception.InnerException is SqlException)
-    {
-      logger.LogError(
-        exception,
-        "[UserRepository][InsertAsync] SQL Server communication failed while inserting a user.");
-
-      throw new DataStoreUnavailableException("SQL Server is unavailable.", exception);
-    }
-    catch (SqlException exception)
-    {
-      logger.LogError(
-        exception,
-        "[UserRepository][InsertAsync] SQL Server communication failed while inserting a user.");
-
-      throw new DataStoreUnavailableException("SQL Server is unavailable.", exception);
-    }
-  }
-
   public async Task<User> UpdateAsync(User user, CancellationToken cancellationToken = default)
   {
     logger.LogDebug(
@@ -72,6 +43,15 @@ public sealed class UserRepository(
       dbContext.Users.Update(user);
       await dbContext.SaveChangesAsync(cancellationToken);
       return user;
+    }
+    catch (DbUpdateException exception) when
+      (exception.InnerException is SqlException sql && sql.Number is 2601 or 2627)
+    {
+      logger.LogWarning(
+        exception,
+        "[UserRepository][UpdateAsync] A uniqueness conflict occurred while updating a user.");
+
+      throw new DataConflictException("A user with the same authentication identifier already exists.", exception);
     }
     catch (DbUpdateException exception) when (exception.InnerException is SqlException)
     {

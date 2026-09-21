@@ -1,0 +1,4 @@
+namespace AccessManagement.Application.UseCases.Profiles.SetProfileActivation;
+
+public interface ISetProfileActivationUseCase
+  : IUseCase<SetProfileActivationUseCaseInput, SetProfileActivationUseCaseOutput>;

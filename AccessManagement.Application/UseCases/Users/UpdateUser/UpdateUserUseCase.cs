@@ -64,15 +64,13 @@ public sealed class UpdateUserUseCase(
 
       return Result<UpdateUserUseCaseOutput>.Ok(MapOutput(updatedUser));
     }
-    catch (DataStoreUnavailableException exception)
+    catch (Exception exception)
     {
       logger.LogError(
         exception,
-        "[UpdateUserUseCase][HandleAsync] User update failed because the data store is unavailable.");
+        "[UpdateUserUseCase][HandleAsync] User update failed.");
 
-      return Result<UpdateUserUseCaseOutput>.Fail(
-        "The data service is temporarily unavailable.",
-        ResultErrorType.Unavailable);
+      return UseCaseFailure.From<UpdateUserUseCaseOutput>(exception);
     }
   }
 

@@ -1,0 +1,4 @@
+namespace AccessManagement.Application.UseCases.Users.AccountUsers.SetUserAccountProfiles;
+
+public interface ISetUserAccountProfilesUseCase
+  : IUseCase<SetUserAccountProfilesUseCaseInput, SetUserAccountProfilesUseCaseOutput>;

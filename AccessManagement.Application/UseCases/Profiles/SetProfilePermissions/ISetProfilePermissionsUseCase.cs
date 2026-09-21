@@ -1,0 +1,4 @@
+namespace AccessManagement.Application.UseCases.Profiles.SetProfilePermissions;
+
+public interface ISetProfilePermissionsUseCase
+  : IUseCase<SetProfilePermissionsUseCaseInput, SetProfilePermissionsUseCaseOutput>;

@@ -1,0 +1,4 @@
+namespace AccessManagement.Application.UseCases.ApprovalRoles.SetApprovalRoleActivation;
+
+public interface ISetApprovalRoleActivationUseCase
+  : IUseCase<SetApprovalRoleActivationUseCaseInput, SetApprovalRoleActivationUseCaseOutput>;

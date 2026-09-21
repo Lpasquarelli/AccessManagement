@@ -38,6 +38,8 @@ public static class ResultExtensions
     {
       ResultErrorType.Validation => StatusCodes.Status400BadRequest,
       ResultErrorType.NotFound => StatusCodes.Status404NotFound,
+      ResultErrorType.Conflict => StatusCodes.Status409Conflict,
+      ResultErrorType.Unprocessable => StatusCodes.Status422UnprocessableEntity,
       ResultErrorType.Unavailable => StatusCodes.Status503ServiceUnavailable,
       _ => StatusCodes.Status500InternalServerError
     };

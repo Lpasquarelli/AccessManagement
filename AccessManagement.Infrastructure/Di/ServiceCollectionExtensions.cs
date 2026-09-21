@@ -57,7 +57,11 @@ public static class ServiceCollectionExtensions
 
     services.AddSingleton<ICacheRepository, CacheRepository>();
     services.AddScoped<IUserRepository, UserRepository>();
-
+    services.AddScoped<IAccessRepository, AccessRepository>();
+    services.AddScoped<IProfileRepository, ProfileRepository>();
+    services.AddScoped<IUserAccountRepository, UserAccountRepository>();
+    services.AddScoped<IApprovalRoleRepository, ApprovalRoleRepository>();
+    services.AddScoped<IAccessCatalogRepository, AccessCatalogRepository>();
     return services;
   }
 

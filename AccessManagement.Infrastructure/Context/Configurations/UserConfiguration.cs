@@ -68,5 +68,15 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
     builder.Property(user => user.UpdatedBy)
       .HasColumnName("UpdatedBy")
       .HasMaxLength(150);
+
+    builder.HasIndex(user => user.Email)
+      .HasDatabaseName("IX_User_Email");
+
+    builder.HasIndex(user => user.TaxId)
+      .HasDatabaseName("IX_User_TaxId");
+
+    builder.HasIndex(user => user.AuthenticationId)
+      .IsUnique()
+      .HasDatabaseName("UX_User_AuthenticationId");
   }
 }

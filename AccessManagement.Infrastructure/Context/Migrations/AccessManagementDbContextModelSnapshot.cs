@@ -23,6 +23,694 @@ namespace AccessManagement.Infrastructure.Context.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("AccessManagement.Domain.Entities.AccessContext", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("char(3)")
+                        .IsFixedLength();
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("Id")
+                        .HasName("PK_Context");
+
+                    b.HasAlternateKey("Name")
+                        .HasName("UQ_Context_Name");
+
+                    b.ToTable("Context", "dbo");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Currency = "BRL",
+                            Description = "Contas nacionais em reais.",
+                            Name = "ONSHORE"
+                        },
+                        new
+                        {
+                            Id = new Guid("20000000-0000-0000-0000-000000000002"),
+                            Currency = "USD",
+                            Description = "Contas internacionais em dólares americanos.",
+                            Name = "OFFSHORE"
+                        });
+                });
+
+            modelBuilder.Entity("AccessManagement.Domain.Entities.Account", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<Guid>("ContextId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2(7)")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("HolderIdentifier")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("Identifier")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id")
+                        .HasName("PK_Account");
+
+                    b.HasIndex("ContextId")
+                        .HasDatabaseName("IX_Account_ContextId");
+
+                    b.HasIndex("Identifier")
+                        .IsUnique()
+                        .HasDatabaseName("UQ_Account_Identifier");
+
+                    b.ToTable("Account", "dbo");
+                });
+
+            modelBuilder.Entity("AccessManagement.Domain.Entities.ApprovalRoleProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<Guid>("AuthorityApprovalRoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2(7)")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<Guid>("ProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id")
+                        .HasName("PK_ApprovalRoleProfile");
+
+                    b.HasAlternateKey("AuthorityApprovalRoleId", "ProfileId")
+                        .HasName("UQ_ApprovalRoleProfile_AuthorityApprovalRoleId_ProfileId");
+
+                    b.HasIndex("ProfileId")
+                        .HasDatabaseName("IX_ApprovalRoleProfile_ProfileId");
+
+                    b.HasIndex("AuthorityApprovalRoleId", "Active")
+                        .HasDatabaseName("IX_ApprovalRoleProfile_AuthorityApprovalRoleId_Active");
+
+                    b.ToTable("ApprovalRoleProfile", "dbo");
+                });
+
+            modelBuilder.Entity("AccessManagement.Domain.Entities.Authority", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2(7)")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id")
+                        .HasName("PK_Authority");
+
+                    b.ToTable("Authority", "dbo");
+                });
+
+            modelBuilder.Entity("AccessManagement.Domain.Entities.AuthorityApprovalRole", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<Guid>("AuthorityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2(7)")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<bool>("IsUnlimitedValueLimit")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<short>("MinApprovers")
+                        .HasColumnType("smallint");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2(7)");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<decimal?>("ValueLimit")
+                        .HasColumnType("decimal(19,4)");
+
+                    b.HasKey("Id")
+                        .HasName("PK_AuthorityApprovalRole");
+
+                    b.HasIndex("AuthorityId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_AuthorityApprovalRole_Active_Unlimited")
+                        .HasFilter("[Active] = 1 AND [IsUnlimitedValueLimit] = 1");
+
+                    b.HasIndex("AuthorityId", "ValueLimit")
+                        .IsUnique()
+                        .HasDatabaseName("UX_AuthorityApprovalRole_Active_LimitedValue")
+                        .HasFilter("[Active] = 1 AND [IsUnlimitedValueLimit] = 0");
+
+                    b.HasIndex("AuthorityId", "Active", "ValueLimit")
+                        .HasDatabaseName("IX_AuthorityApprovalRole_AuthorityId_Active_ValueLimit");
+
+                    b.ToTable("AuthorityApprovalRole", "dbo", t =>
+                        {
+                            t.HasCheckConstraint("CK_AuthorityApprovalRole_MinApprovers", "[MinApprovers] > 0");
+
+                            t.HasCheckConstraint("CK_AuthorityApprovalRole_ValueLimit", "([IsUnlimitedValueLimit] = 1 AND [ValueLimit] IS NULL) OR ([IsUnlimitedValueLimit] = 0 AND [ValueLimit] > 0)");
+                        });
+                });
+
+            modelBuilder.Entity("AccessManagement.Domain.Entities.Permission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id")
+                        .HasName("PK_Permission");
+
+                    b.ToTable("Permission", "dbo");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000001"),
+                            Description = "Saldo / Extrato"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000002"),
+                            Description = "Boletos"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000003"),
+                            Description = "Investimentos"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000004"),
+                            Description = "Conta Vinculada"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000005"),
+                            Description = "Favorecido"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000006"),
+                            Description = "Pagamentos"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000007"),
+                            Description = "Transferências de mesma titularidade"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000008"),
+                            Description = "Transferências de outras titularidades"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000009"),
+                            Description = "PIX"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000010"),
+                            Description = "Pagamentos em lote"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000011"),
+                            Description = "Boleto"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000012"),
+                            Description = "Pagamentos"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000013"),
+                            Description = "Transferências de mesma titularidade"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000014"),
+                            Description = "Transferências de outras titularidades"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000015"),
+                            Description = "PIX"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000016"),
+                            Description = "Adicionar Favorecidos"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000017"),
+                            Description = "Pagamentos em lote"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000018"),
+                            Description = "Aplicar em investimentos"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000019"),
+                            Description = "Gestão de Perfis"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000020"),
+                            Description = "Gestão de Acessos"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000021"),
+                            Description = "Gestão de Alçadas"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000022"),
+                            Description = "Instruções de Boletos"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000023"),
+                            Description = "Resgatar Investimentos"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000024"),
+                            Description = "Transferência na conta vinculada"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000025"),
+                            Description = "Antecipação de recebíveis"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000026"),
+                            Description = "Câmbio"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000027"),
+                            Description = "Cartões"
+                        });
+                });
+
+            modelBuilder.Entity("AccessManagement.Domain.Entities.PermissionGroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+                    b.Property<Guid>("ContextId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid>("PermissionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id")
+                        .HasName("PK_PermissionGroup");
+
+                    b.HasAlternateKey("ContextId", "PermissionId")
+                        .HasName("UQ_PermissionGroup_ContextId_PermissionId");
+
+                    b.HasIndex("PermissionId")
+                        .HasDatabaseName("IX_PermissionGroup_PermissionId");
+
+                    b.ToTable("PermissionGroup", "dbo");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000001"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Permissões de Consulta",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000001")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000002"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Permissões de Consulta",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000002")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000003"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Permissões de Consulta",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000003")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000004"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Permissões de Consulta",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000004")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000005"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Permissões de Aprovação",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000005")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000006"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Permissões de Aprovação",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000006")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000007"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Permissões de Aprovação",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000007")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000008"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Permissões de Aprovação",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000008")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000009"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Permissões de Aprovação",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000009")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000010"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Permissões de Aprovação",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000010")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000011"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Permissões de Inclusão",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000011")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000012"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Permissões de Inclusão",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000012")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000013"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Permissões de Inclusão",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000013")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000014"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Permissões de Inclusão",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000014")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000015"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Permissões de Inclusão",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000015")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000016"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Permissões de Inclusão",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000016")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000017"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Permissões de Inclusão",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000017")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000018"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Outras Permissões",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000018")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000019"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Outras Permissões",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000019")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000020"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Outras Permissões",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000020")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000021"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Outras Permissões",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000021")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000022"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Outras Permissões",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000022")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000023"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Outras Permissões",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000023")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000024"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Outras Permissões",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000024")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000025"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Outras Permissões",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000025")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000026"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Outras Permissões",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000026")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000027"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000001"),
+                            Description = "Outras Permissões",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000027")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000028"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000002"),
+                            Description = "Permissões de Aprovação",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000006")
+                        },
+                        new
+                        {
+                            Id = new Guid("30000000-0000-0000-0000-000000000029"),
+                            ContextId = new Guid("20000000-0000-0000-0000-000000000002"),
+                            Description = "Permissões de Inclusão",
+                            PermissionId = new Guid("10000000-0000-0000-0000-000000000012")
+                        });
+                });
+
+            modelBuilder.Entity("AccessManagement.Domain.Entities.Profile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2(7)")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2(7)");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("Id")
+                        .HasName("PK_Profile");
+
+                    b.HasAlternateKey("AccountId", "Name")
+                        .HasName("UQ_Profile_AccountId_Name");
+
+                    b.HasIndex("AccountId", "Active")
+                        .HasDatabaseName("IX_Profile_AccountId_Active");
+
+                    b.ToTable("Profile", "dbo");
+                });
+
+            modelBuilder.Entity("AccessManagement.Domain.Entities.ProfilePermission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+                    b.Property<Guid>("PermissionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id")
+                        .HasName("PK_ProfilePermission");
+
+                    b.HasAlternateKey("ProfileId", "PermissionId")
+                        .HasName("UQ_ProfilePermission_ProfileId_PermissionId");
+
+                    b.HasIndex("PermissionId")
+                        .HasDatabaseName("IX_ProfilePermission_PermissionId");
+
+                    b.ToTable("ProfilePermission", "dbo");
+                });
+
             modelBuilder.Entity("AccessManagement.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -94,7 +782,229 @@ namespace AccessManagement.Infrastructure.Context.Migrations
                     b.HasKey("Id")
                         .HasName("PK_User");
 
+                    b.HasIndex("AuthenticationId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_User_AuthenticationId");
+
+                    b.HasIndex("Email")
+                        .HasDatabaseName("IX_User_Email");
+
+                    b.HasIndex("TaxId")
+                        .HasDatabaseName("IX_User_TaxId");
+
                     b.ToTable("User", "dbo");
+                });
+
+            modelBuilder.Entity("AccessManagement.Domain.Entities.UserAccount", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsHolder")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsMaster")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id")
+                        .HasName("PK_UserAccount");
+
+                    b.HasAlternateKey("UserId", "AccountId")
+                        .HasName("UQ_UserAccount_UserId_AccountId");
+
+                    b.HasIndex("AccountId", "Active")
+                        .HasDatabaseName("IX_UserAccount_AccountId_Active");
+
+                    b.ToTable("UserAccount", "dbo");
+                });
+
+            modelBuilder.Entity("AccessManagement.Domain.Entities.UserAccountProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2(7)")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<Guid>("ProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2(7)");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<Guid>("UserAccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id")
+                        .HasName("PK_UserAccountProfiles");
+
+                    b.HasAlternateKey("UserAccountId", "ProfileId")
+                        .HasName("UQ_UserAccountProfiles_UserAccountId_ProfileId");
+
+                    b.HasIndex("ProfileId")
+                        .HasDatabaseName("IX_UserAccountProfiles_ProfileId");
+
+                    b.HasIndex("UserAccountId", "Active")
+                        .HasDatabaseName("IX_UserAccountProfiles_UserAccountId_Active");
+
+                    b.ToTable("UserAccountProfiles", "dbo");
+                });
+
+            modelBuilder.Entity("AccessManagement.Domain.Entities.Account", b =>
+                {
+                    b.HasOne("AccessManagement.Domain.Entities.AccessContext", null)
+                        .WithMany()
+                        .HasForeignKey("ContextId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Account_Context");
+                });
+
+            modelBuilder.Entity("AccessManagement.Domain.Entities.ApprovalRoleProfile", b =>
+                {
+                    b.HasOne("AccessManagement.Domain.Entities.AuthorityApprovalRole", "AuthorityApprovalRole")
+                        .WithMany()
+                        .HasForeignKey("AuthorityApprovalRoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_ApprovalRoleProfile_AuthorityApprovalRole");
+
+                    b.HasOne("AccessManagement.Domain.Entities.Profile", null)
+                        .WithMany()
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_ApprovalRoleProfile_Profile");
+
+                    b.Navigation("AuthorityApprovalRole");
+                });
+
+            modelBuilder.Entity("AccessManagement.Domain.Entities.AuthorityApprovalRole", b =>
+                {
+                    b.HasOne("AccessManagement.Domain.Entities.Authority", null)
+                        .WithMany()
+                        .HasForeignKey("AuthorityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_AuthorityApprovalRole_Authority");
+                });
+
+            modelBuilder.Entity("AccessManagement.Domain.Entities.PermissionGroup", b =>
+                {
+                    b.HasOne("AccessManagement.Domain.Entities.AccessContext", null)
+                        .WithMany()
+                        .HasForeignKey("ContextId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_PermissionGroup_Context");
+
+                    b.HasOne("AccessManagement.Domain.Entities.Permission", null)
+                        .WithMany()
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_PermissionGroup_Permission");
+                });
+
+            modelBuilder.Entity("AccessManagement.Domain.Entities.Profile", b =>
+                {
+                    b.HasOne("AccessManagement.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Profile_Account");
+                });
+
+            modelBuilder.Entity("AccessManagement.Domain.Entities.ProfilePermission", b =>
+                {
+                    b.HasOne("AccessManagement.Domain.Entities.Permission", null)
+                        .WithMany()
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_ProfilePermission_Permission");
+
+                    b.HasOne("AccessManagement.Domain.Entities.Profile", "Profile")
+                        .WithMany()
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_ProfilePermission_Profile");
+
+                    b.Navigation("Profile");
+                });
+
+            modelBuilder.Entity("AccessManagement.Domain.Entities.UserAccount", b =>
+                {
+                    b.HasOne("AccessManagement.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_UserAccount_Account");
+
+                    b.HasOne("AccessManagement.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_UserAccount_User");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("AccessManagement.Domain.Entities.UserAccountProfile", b =>
+                {
+                    b.HasOne("AccessManagement.Domain.Entities.Profile", null)
+                        .WithMany()
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_UserAccountProfiles_Profile");
+
+                    b.HasOne("AccessManagement.Domain.Entities.UserAccount", "UserAccount")
+                        .WithMany()
+                        .HasForeignKey("UserAccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_UserAccountProfiles_UserAccount");
+
+                    b.Navigation("UserAccount");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,0 +1,3 @@
+namespace AccessManagement.Application.UseCases.ApprovalRoles.ListApprovalRoles;
+
+public interface IListApprovalRolesUseCase : IUseCase<ListApprovalRolesUseCaseInput, IReadOnlyCollection<ApprovalRoleOutput>>;

@@ -1,0 +1,4 @@
+namespace AccessManagement.Application.UseCases.Users.AccountUsers.SetUserAccountActivation;
+
+public interface ISetUserAccountActivationUseCase
+  : IUseCase<SetUserAccountActivationUseCaseInput, SetUserAccountActivationUseCaseOutput>;

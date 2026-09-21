@@ -1,0 +1,3 @@
+namespace AccessManagement.Application.UseCases.ApprovalRoles.UpdateApprovalRole;
+
+public interface IUpdateApprovalRoleUseCase : IUseCase<UpdateApprovalRoleUseCaseInput, UpdateApprovalRoleUseCaseOutput>;

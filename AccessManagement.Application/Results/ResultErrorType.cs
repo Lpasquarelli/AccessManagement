@@ -6,5 +6,7 @@ public enum ResultErrorType
   Validation = 1,
   NotFound = 2,
   Unavailable = 3,
-  Unexpected = 4
+  Unexpected = 4,
+  Conflict = 5,
+  Unprocessable = 6
 }
