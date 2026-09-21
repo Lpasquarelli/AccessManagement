@@ -366,3 +366,6 @@ FodyWeavers.xsd
 
 .vs
 .vs/*
+
+.config
+.editorconfig
